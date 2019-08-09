@@ -28,7 +28,6 @@ class RegisterUser extends React.Component {
     render() {
         return (
             <div className='register-form'>
-                <h1>Register</h1>
                 <Form>
                     <label>Username</label>
                     <Field type='text' name='username' placeholder='Username' />
@@ -48,13 +47,14 @@ class RegisterUser extends React.Component {
                     </label>
                     {this.props.touched.tos && this.props.errors.tos && <p>{this.props.errors.tos}</p>}
 
-                    <button type='submit' onClick={() => {this.getHandleSubmit()}}>Register</button>
+                    <button type='submit' data-testid='submit' onClick={() => {this.getHandleSubmit()}}>Register</button>
                 </Form>
 
                 {this.state.userData.map(item => {
                     return(
-                        <div key={item.name}>
-                            <p>{item.name}</p>
+                        <div key={item.name} className='recipe-item'>
+                            <h1>{item.course}: {item.name}</h1>
+                            <h3>Cooking technique: {item.technique}</h3>
                         </div>
                     )
                     
