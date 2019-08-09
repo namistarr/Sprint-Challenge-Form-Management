@@ -8,8 +8,22 @@ class RegisterUser extends React.Component {
 
     constructor() {
         super();
-        this.state={}
+        this.state={
+            userData: []
+        }
     }    
+
+    getHandleSubmit = () => {
+        axios.get('http://localhost:5000/api/restricted/data')
+       .then(response => {
+        //    console.log('response from axios.get:', response);
+           this.setState({userData: response.data});
+           console.log('get request response:', this.state.userData)
+       })
+       .catch(error => {
+           console.log('error in getHandleSubmit', error)
+       })
+   }
 
     render() {
         return (
@@ -34,9 +48,18 @@ class RegisterUser extends React.Component {
                     </label>
                     {this.props.touched.tos && this.props.errors.tos && <p>{this.props.errors.tos}</p>}
 
-
-                    <button type='submit'>Register</button>
+                    <button type='submit' onClick={() => {this.getHandleSubmit()}}>Register</button>
                 </Form>
+
+                {this.state.userData.map(item => {
+                    return(
+                        <div key={item.name}>
+                            <p>{item.name}</p>
+                        </div>
+                    )
+                    
+                })}
+
             </div>
         )
     }   
@@ -53,22 +76,25 @@ const RegisterUserFormik = withFormik({
     },
 
     validationSchema: Yup.object().shape({
-        username: Yup.string().required(),
-        password: Yup.string().min(6, 'Enter 6 or more characters.').required(),
+        username: Yup.string().required('A username is required to register'),
+        password: Yup.string().min(6, 'Enter 6 or more characters.').required('A password is required to register'),
         tos: Yup.boolean().oneOf([true], 'Must accept Terms of Service')        
     }),
 
-    handleSubmit(values) {
+    handleSubmit(values, { resetForm }) {
         console.log(values)
         axios.post('http://localhost:5000/api/register', values)
         .then(response => {
-            console.log(response.data);
-            this.setState(response.data);
+            console.log('Posted:', response.data);
+            // this.setState(response.data);
+            resetForm();
         })
         .catch(error => {
             console.log('error in handleSubmit', error)
         })
     }
+
+ 
 
 })(RegisterUser);
 
